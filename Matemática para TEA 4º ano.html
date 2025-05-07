@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Ilha da Matemática - TEA 4º Ano</title>
+  <meta name="viewport" content="width=480, initial-scale=1.0">
+  <style>
+    body {
+      background: #b3e5fc url('https://img.freepik.com/fotos-gratis/bela-praia-tropical-mar-oceano-com-nuvem-branca-azul-ceu-e-copyspace_74190-8663.jpg?t=st=1746036328~exp=1746039928~hmac=8e48823b4b167e25d5d06c52eefc654431edbaaa4463cea702e1fc7d9cc71876&w=1060') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Arial Rounded MT Bold', Arial, sans-serif;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .container {
+      max-width: 540px;
+      margin: 0 auto;
+      padding-top: 30px;
+      position: relative;
+      z-index: 2;
+    }
+    h1 {
+      color: #1976d2;
+      text-align: center;
+      font-size: 2.2em;
+      margin-bottom: 10px;
+      text-shadow: 1px 1px 0 #fff;
+    }
+    #mapa {
+      position: relative;
+      width: 480px;
+      height: 600px;
+      margin: 0 auto 20px auto;
+      background: url('https://img.freepik.com/vetores-gratis/cena-com-ilha-no-mar_1308-29923.jpg?t=st=1746036401~exp=1746040001~hmac=d8e7a6954d680f8b38c03d30601dc96f02a0e59af0c07def824e3b8340f189b0&w=1060') no-repeat center center/cover;
+      border-radius: 40px;
+      box-shadow: 0 4px 24px #0288d1;
+      overflow: hidden;
+      border: 6px solid #fffde7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .fase {
+      position: absolute;
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: #fffde7;
+      border: 4px solid #1976d2;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s, border 0.2s, box-shadow 0.2s;
+      box-shadow: 2px 2px 12px #b0c4de;
+      z-index: 2;
+      outline: 4px solid #fffde7;
+    }
+    .fase.atual { background: #b2ebf2; border: 4px solid #388e3c; box-shadow: 0 0 16px #388e3c; }
+    .fase.completada { background: #bdbdbd; border: 4px solid #616161; color: #fff; }
+    .fase.chefao { background: #ff7043; border: 4px solid #bf360c; color: #fff; font-size: 1.7em; box-shadow: 0 0 18px #ff7043; }
+    .fase img { width: 36px; height: 36px; }
+    .painel {
+      background: #fffde7;
+      border-radius: 28px;
+      box-shadow: 0 4px 24px #0288d1;
+      width: 480px;
+      min-height: 260px;
+      margin: 0 auto 30px auto;
+      padding: 32px 24px 24px 24px;
+      text-align: center;
+      position: relative;
+      border: 6px solid #1976d2;
+      font-size: 1.2em;
+      z-index: 3;
+    }
+    .questao {
+      font-size: 1.4em;
+      margin-bottom: 22px;
+      color: #1976d2;
+    }
+    .opcoes {
+      display: flex;
+      justify-content: center;
+      gap: 22px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+    .opcao-btn {
+      background: #e1ecf4;
+      border: 2.5px solid #1976d2;
+      border-radius: 12px;
+      font-size: 1.3em;
+      padding: 16px 32px;
+      cursor: pointer;
+      transition: background 0.2s;
+      outline: none;
+      margin-bottom: 10px;
+      min-width: 70px;
+    }
+    .opcao-btn:active { background: #b3cde0; }
+    .feedback {
+      font-size: 1.3em;
+      margin-top: 14px;
+      min-height: 36px;
+      transition: color 0.2s;
+    }
+    .success { color: #228B22; }
+    .error { color: #d7263d; }
+    .progresso {
+      margin: 14px 0 0 0;
+      font-size: 1.15em;
+      color: #1976d2;
+    }
+    .proximo-btn {
+      margin-top: 22px;
+      background: #1976d2;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.2em;
+      padding: 12px 32px;
+      cursor: pointer;
+      display: none;
+    }
+    .proximo-btn:active { background: #0d47a1; }
+    .estrela {
+      font-size: 2.7em;
+      color: gold;
+      animation: estrela 1s infinite alternate;
+    }
+    @keyframes estrela {
+      0% { transform: scale(1);}
+      100% { transform: scale(1.2);}
+    }
+    .fogos {
+      position: absolute;
+      left: 50%; top: 30px;
+      transform: translateX(-50%);
+      font-size: 2.7em;
+      animation: fogos 1s infinite alternate;
+    }
+    @keyframes fogos {
+      0% { opacity: 0.7;}
+      100% { opacity: 1;}
+    }
+    @media (max-width: 540px) {
+      .container, #mapa, .painel { width: 98vw !important; min-width: 0; }
+      #mapa, .painel { min-width: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Ilha da Matemática</h1>
+    <div id="mapa"></div>
+    <div class="painel" id="painel"></div>
+  </div>
+  <audio id="acerto" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae5b2.mp3"></audio>
+  <audio id="erro" src="https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae5b2.mp3"></audio>
+  <script>
+    // Ícones de elementos de ilha
+    const icones = [
+      '🥥','🌴','🌴','⛰️','🌋','🌳','🏝️','🏞️','🏕️','🏖️','🌲','🌵','🏔️','🏜️','🐙'
+    ];
+    // Coordenadas em curva para 15 fases
+    const coords = [
+      {x:60,y:500},{x:100,y:430},{x:160,y:390},{x:220,y:430},{x:280,y:500},
+      {x:340,y:430},{x:380,y:370},{x:340,y:300},{x:280,y:250},{x:220,y:200},
+      {x:160,y:150},{x:100,y:200},{x:60,y:270},{x:100,y:350},{x:220,y:80}
+    ];
+    const fases = Array.from({length: 15}, (_,i) => ({
+      nome: i<14 ? `Fase ${i+1}` : 'Fase Final',
+      icon: icones[i],
+      chefao: i===14,
+      x: coords[i].x,
+      y: coords[i].y
+    }));
+    let faseAtual = 0;
+    let acertosFase = 0, questaoAtual = 0, questoesFase = [];
+    let completadas = [];
+    // GERA QUESTÕES ALEATÓRIAS
+    function gerarQuestoes() {
+      let qs = [];
+      for (let i = 0; i < 3; i++) {
+        let op = Math.floor(Math.random()*3);
+        let a = Math.floor(Math.random()*11)+5, b = Math.floor(Math.random()*11)+2;
+        let enunciado, resposta;
+        if (op === 0) { enunciado = `${a} + ${b}`; resposta = a+b; }
+        else if (op === 1) { enunciado = `${a+b} - ${a}`; resposta = b; }
+        else { enunciado = `${a} x ${b}`; resposta = a*b; }
+        let opcoes = [resposta];
+        while (opcoes.length < 3) {
+          let fake = resposta + Math.floor(Math.random()*7)-3;
+          if (!opcoes.includes(fake) && fake > 0) opcoes.push(fake);
+        }
+        opcoes = opcoes.sort(()=>Math.random()-0.5);
+        qs.push({enunciado, resposta, opcoes});
+      }
+      return qs;
+    }
+    // QUESTÃO DO CHEFÃO
+    function questaoChefao() {
+      let a = Math.floor(Math.random()*6)+5, b = Math.floor(Math.random()*6)+2;
+      let enunciado = `(${a} x ${b}) + ${b}`;
+      let resposta = (a*b)+b;
+      let opcoes = [resposta];
+      while (opcoes.length < 3) {
+        let fake = resposta + Math.floor(Math.random()*7)-3;
+        if (!opcoes.includes(fake) && fake > 0) opcoes.push(fake);
+      }
+      opcoes = opcoes.sort(()=>Math.random()-0.5);
+      return {enunciado, resposta, opcoes};
+    }
+    // DESENHA O MAPA
+    function desenhaMapa() {
+      const mapa = document.getElementById('mapa');
+      mapa.innerHTML = '';
+      fases.forEach((f, i) => {
+        let fase = document.createElement('div');
+        fase.className = 'fase';
+        if (i === faseAtual) fase.classList.add('atual');
+        if (completadas.includes(i)) fase.classList.add('completada');
+        if (f.chefao) fase.classList.add('chefao');
+        fase.style.left = f.x+'px'; fase.style.top = f.y+'px';
+        fase.innerHTML = `<span>${f.icon}</span><br><small>${f.nome}</small>`;
+        fase.onclick = () => { if (i <= faseAtual) iniciarFase(i); };
+        mapa.appendChild(fase);
+      });
+    }
+    // INICIA UMA FASE
+    function iniciarFase(idx) {
+      faseAtual = idx;
+      acertosFase = 0; questaoAtual = 0;
+      questoesFase = idx === fases.length-1 ? [questaoChefao()] : gerarQuestoes();
+      desenhaMapa();
+      mostrarQuestao();
+    }
+    // MOSTRA UMA QUESTÃO
+    function mostrarQuestao() {
+      const painel = document.getElementById('painel');
+      painel.innerHTML = '';
+      let fase = fases[faseAtual];
+      let q = questoesFase[questaoAtual];
+      let questao = document.createElement('div');
+      questao.className = 'questao';
+      questao.innerHTML = fase.chefao ? `<b>CHEFÃO ${fases[fases.length-1].icon}</b><br>${q.enunciado}` : `<b>${fase.nome}</b><br>${q.enunciado}`;
+      painel.appendChild(questao);
+      let opcoesDiv = document.createElement('div');
+      opcoesDiv.className = 'opcoes';
+      q.opcoes.forEach(op => {
+        let btn = document.createElement('button');
+        btn.className = 'opcao-btn';
+        btn.textContent = op;
+        btn.onclick = () => checarResposta(op, q.resposta);
+        opcoesDiv.appendChild(btn);
+      });
+      painel.appendChild(opcoesDiv);
+      let feedback = document.createElement('div');
+      feedback.className = 'feedback';
+      feedback.id = 'feedback';
+      painel.appendChild(feedback);
+      let progresso = document.createElement('div');
+      progresso.className = 'progresso';
+      progresso.textContent = fase.chefao ? '' : `Questão ${questaoAtual+1} de 3`;
+      painel.appendChild(progresso);
+    }
+    // CHECA RESPOSTA
+    function checarResposta(valor, resposta) {
+      const feedback = document.getElementById('feedback');
+      if (valor == resposta) {
+        acertosFase++;
+        feedback.innerHTML = 'Muito bem! <span class="estrela">😊</span>';
+        feedback.className = 'feedback success';
+        document.getElementById('acerto').play();
+        setTimeout(()=>proximaQuestao(), 900);
+      } else {
+        feedback.innerHTML = 'Tente de novo! <span>🙂</span>';
+        feedback.className = 'feedback error';
+        document.getElementById('erro').play();
+        setTimeout(()=>proximaQuestao(), 1200);
+      }
+    }
+    // AVANÇA QUESTÃO OU FASE
+    function proximaQuestao() {
+      let fase = fases[faseAtual];
+      if (fase.chefao) {
+        if (acertosFase > 0) return mostrarVitoria();
+        else return mostrarDerrota();
+      }
+      questaoAtual++;
+      if (questaoAtual < 3) {
+        mostrarQuestao();
+      } else {
+        if (acertosFase >= 2) {
+          completadas.push(faseAtual);
+          if (faseAtual < fases.length-1) {
+            faseAtual++;
+            iniciarFase(faseAtual);
+          } else {
+            mostrarVitoria();
+          }
+        } else {
+          mostrarDerrota();
+        }
+      }
+    }
+    // VITÓRIA
+    function mostrarVitoria() {
+      desenhaMapa();
+      const painel = document.getElementById('painel');
+      painel.innerHTML = `<div class=\"fogos\">🎆🎉</div>
+        <h2>Parabéns! Você venceu o chefão e conquistou a Ilha da Matemática!</h2>
+        <div class=\"estrela\">⭐</div>
+        <p>Continue praticando para se tornar um mestre matemático!</p>
+        <button class=\"proximo-btn\" onclick=\"location.reload()\">Jogar Novamente</button>`;
+    }
+    // DERROTA
+    function mostrarDerrota() {
+      desenhaMapa();
+      const painel = document.getElementById('painel');
+      painel.innerHTML = `<h2>Não desista!</h2>
+        <p>Você pode tentar novamente desde o início da ilha.<br>Com calma, você consegue!</p>
+        <button class=\"proximo-btn\" onclick=\"iniciarFase(0)\">Recomeçar</button>`;
+    }
+    // INICIALIZA
+    desenhaMapa();
+    iniciarFase(0);
+  </script>
+</body>
+</html>
